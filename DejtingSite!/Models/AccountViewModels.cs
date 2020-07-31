@@ -154,7 +154,7 @@ namespace DejtingSite_.Models
         public string PicturePath { get; set; }
         public bool isFriend { get; set; }
         public string Comment { get; set; }
-        public List<Posts> Posts { get; set; }
+        public List<Post> PostLista { get; set; }
         public List<ApplicationUser> UsersPosted { get; set; }
     }
 

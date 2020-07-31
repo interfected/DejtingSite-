@@ -38,7 +38,7 @@ namespace DejtingSite_.Models
         //public ICollection<FriendRequests> UserReceivedFriendRequest { get; set; }
     }
 
-    public class Posts
+    public class Post
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
@@ -91,7 +91,7 @@ namespace DejtingSite_.Models
 
         public virtual DbSet<Friends> Friends { get; set; }
         public virtual DbSet<FriendRequests> FriendRequests { get; set; }
-        public virtual DbSet<Posts> Posts { get; set; }
+        public virtual DbSet<Post> PostLista { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -111,7 +111,7 @@ namespace DejtingSite_.Models
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Friends>();
             modelBuilder.Entity<FriendRequests>();
-            modelBuilder.Entity<Posts>();
+            modelBuilder.Entity<Post>();
         }
         //public System.Data.Entity.DbSet<DatingSite.Models.ApplicationUser> ApplicationUsers { get; set; }
     }

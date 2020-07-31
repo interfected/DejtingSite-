@@ -7,13 +7,13 @@ namespace DejtingSite_.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class FörstaDatabas : IMigrationMetadata
+    public sealed partial class Initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(FörstaDatabas));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(Initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "202007291401243_FörstaDatabas"; }
+            get { return "202007310929400_Initial"; }
         }
         
         string IMigrationMetadata.Source

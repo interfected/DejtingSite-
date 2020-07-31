@@ -186,9 +186,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202007291401243_FörstaDatabas.cs" />
-    <Compile Include="Migrations\202007291401243_FörstaDatabas.Designer.cs">
-      <DependentUpon>202007291401243_FörstaDatabas.cs</DependentUpon>
+    <Compile Include="Migrations\202007310929400_Initial.cs" />
+    <Compile Include="Migrations\202007310929400_Initial.Designer.cs">
+      <DependentUpon>202007310929400_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
@@ -273,8 +273,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202007291401243_FörstaDatabas.resx">
-      <DependentUpon>202007291401243_FörstaDatabas.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202007310929400_Initial.resx">
+      <DependentUpon>202007310929400_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

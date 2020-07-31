@@ -5,14 +5,14 @@ namespace DejtingSite_.Migrations
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<DejtingSite_.Models.OwnContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<DejtingSite_.Models.ApplicationDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(DejtingSite_.Models.OwnContext context)
+        protected override void Seed(DejtingSite_.Models.ApplicationDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 
