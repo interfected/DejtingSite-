@@ -1,31 +1,41 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
-
+﻿@using Microsoft.AspNet.Identity
+@model DejtingSidan.Models.HomeViewModels
+@using Microsoft.AspNet.Identity;
+@{ ViewBag.Title = "Home Page"; }
+@if (!Request.IsAuthenticated)
+{
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+    <h1>Hitta din lokala ghettobrud</h1>
+    <p>@Html.ActionLink("Registrera Dig", "Register", "Account", null, new { @class = "btn btn-outline-primary" })</p>
+    <p>@Html.ActionLink("Logga in", "Login", "Account", null, new { @class = "btn btn-outline-primary" })</p>
+</div>}
+@if (Request.IsAuthenticated)
+{
+<div class="row">
+    @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "col-md-6" }))
+    {
+@Html.TextBox("Sök", null, new { @class = "col-md-6 align-middle", @placeholder = "Sök efter ghettobrudar..." })
+                    <input type="submit" value="search" />}
+</div>}
 
 <div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
+    @for (int i = 0; i < Model.users.Count(); i++)
+    {
+<div class="col-md-4 d-flex align-items-stretch">
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <img class="card-img-top" src="~/UploadedFiles/@Model.filePath.ElementAt(i)" alt="profile pic" />
+            <h5 class="card-title">@Model.users.ElementAt(i).FirstName @Model.users.ElementAt(i).LastName</h5>
+            <p class="card-text">@Model.users.ElementAt(i).Description</p>
+            @Html.ActionLink("Profile", "Personal", "Account", new { Id = Model.users.ElementAt(i).Id }, new { @class = "btn btn-primary" })
+            @if (Request.IsAuthenticated)
+            {
+                if (!Model.isFriends[i])
+                {
+@Html.ActionLink("Add", "AddFriend", "Home", new { id = Model.users.ElementAt(i).Id }, new { @class = "btn btn-success" })}
+                }
+        </div>
     </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
+</div>}
 </div>
+

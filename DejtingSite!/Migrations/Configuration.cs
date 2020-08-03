@@ -1,18 +1,18 @@
-namespace DejtingSite_.Migrations
+namespace DejtingSidan.Migrations
 {
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
     using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<DejtingSite_.Models.ApplicationDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<DejtingSidan.Models.ApplicationDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(DejtingSite_.Models.ApplicationDbContext context)
+        protected override void Seed(DejtingSidan.Models.ApplicationDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

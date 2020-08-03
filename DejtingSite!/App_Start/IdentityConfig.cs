@@ -10,9 +10,9 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
-using DejtingSite_.Models;
+using DejtingSidan.Models;
 
-namespace DejtingSite_
+namespace DejtingSidan
 {
     public class EmailService : IIdentityMessageService
     {

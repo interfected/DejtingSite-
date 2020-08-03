@@ -1,4 +1,4 @@
-namespace DejtingSite_.Migrations
+namespace DejtingSidan.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;

@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Optimization;
 
-namespace DejtingSite_
+namespace DejtingSidan
 {
     public class BundleConfig
     {

@@ -5,9 +5,9 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
-using DejtingSite_.Models;
+using DejtingSidan.Models;
 
-namespace DejtingSite_
+namespace DejtingSidan
 {
     public partial class Startup
     {

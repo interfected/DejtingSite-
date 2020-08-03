@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 
-namespace DejtingSite_
+namespace DejtingSidan
 {
     public class FilterConfig
     {

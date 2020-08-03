@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace DatingSite_.Models
+namespace DejtingSidan.Models
 {
     public class FileUploadModel
     {

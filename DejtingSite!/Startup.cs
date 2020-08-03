@@ -1,8 +1,8 @@
 ﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(DejtingSite_.Startup))]
-namespace DejtingSite_
+[assembly: OwinStartupAttribute(typeof(DejtingSidan.Startup))]
+namespace DejtingSidan
 {
     public partial class Startup
     {

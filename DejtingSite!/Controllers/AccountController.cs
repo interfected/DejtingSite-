@@ -8,9 +8,11 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using DejtingSite_.Models;
+using System.IO;
+using System.Collections.Generic;
+using DejtingSidan.Models;
 
-namespace DejtingSite_.Controllers
+namespace DejtingSidan.Controllers
 {
     [Authorize]
     public class AccountController : Controller
@@ -18,11 +20,12 @@ namespace DejtingSite_.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
+        public OwnContext DbManager { get; set; } = new OwnContext();
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -34,10 +37,77 @@ namespace DejtingSite_.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
+        }
+
+        public ActionResult FriendList()
+        {
+            FriendViewModel model = new FriendViewModel();
+            List<ApplicationUser> friends = new List<ApplicationUser>();
+            List<FriendRequests> requestsSent = new List<FriendRequests>();
+            List<FriendRequests> requestsReceived = new List<FriendRequests>();
+
+            List<ApplicationUser> friendsSent = new List<ApplicationUser>();
+            List<ApplicationUser> friendsReceived = new List<ApplicationUser>();
+
+            var currUser = UserManager.FindById(User.Identity.GetUserId());
+            var firstFriends = DbManager.Friends
+                .Where(f => f.User1Id == currUser.Id)
+                .ToList();
+
+            foreach (var friend in firstFriends)
+            {
+                friends.Add(UserManager.FindById(friend.User2Id));
+            }
+
+            var secondFriends = DbManager.Friends
+                .Where(f => f.User2Id == currUser.Id)
+                .ToList();
+
+            foreach (var friend in secondFriends)
+            {
+                friends.Add(UserManager.FindById(friend.User1Id));
+            }
+
+            model.friends = friends;
+
+            var friendRequestsSent = DbManager.FriendRequests
+                .Where(r => r.UserSentId == currUser.Id)
+                .ToList();
+
+            foreach (var request in friendRequestsSent)
+            {
+                var user = UserManager.FindById(request.UserReceivedId);
+                if (user != null)
+                {
+                    requestsSent.Add(request);
+                    friendsSent.Add(user);
+                }
+            }
+
+            var friendRequestsReceived = DbManager.FriendRequests
+                .Where(r => r.UserReceivedId == currUser.Id)
+                .ToList();
+
+            foreach (var request in friendRequestsReceived)
+            {
+                var user = UserManager.FindById(request.UserSentId);
+                if (user != null)
+                {
+                    requestsReceived.Add(request);
+                    friendsReceived.Add(user);
+                }
+            }
+
+            model.friendRequestsSent = requestsSent;
+            model.friendRequestsReceived = requestsReceived;
+            model.friendsSent = friendsSent;
+            model.friendsReceived = friendsReceived;
+
+            return PartialView(model);
         }
 
         public ApplicationUserManager UserManager
@@ -59,6 +129,86 @@ namespace DejtingSite_.Controllers
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
+        }
+
+        public ActionResult Personal(string id)
+        {
+            var user = UserManager.FindById(id);
+            if (user == null)
+                user = UserManager.FindById(User.Identity.GetUserId());
+            ProfileViewModel model = new ProfileViewModel();
+            bool isFriends;
+            var currUser = UserManager.FindById(User.Identity.GetUserId());
+            model.Description = user.Description;
+            model.City = user.City;
+            model.FirstName = user.FirstName;
+            model.LastName = user.LastName;
+            model.BirthDate = user.BirthDate;
+            model.Gender = model.Gender;
+            model.Profile = user.Profile;
+            model.Id = user.Id;
+
+            bool existAsFriend = DbManager.Friends.Any(f => (f.User1Id == user.Id && f.User2Id == currUser.Id)
+                    || (f.User2Id == user.Id && f.User1Id == currUser.Id));
+            bool existAsRequest = DbManager.FriendRequests.Any(f => (f.UserSentId == user.Id && f.UserReceivedId == currUser.Id)
+                    || (f.UserReceivedId == user.Id && f.UserSentId == currUser.Id));
+            bool isCurrUserProfile = (user.Id == currUser.Id);
+
+            isFriends = (existAsFriend || existAsRequest || isCurrUserProfile);
+
+            model.isFriend = isFriends;
+
+            var file = Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadedFiles"))
+                .Where(f => f.Contains(user.Id));
+            if(file.Count() != 0)
+            {
+                var filePath = file.First().Split('\\');
+                var fileName = filePath[filePath.Length - 1];
+                model.PicturePath = fileName;
+            }
+            else
+            {
+                model.PicturePath = "default_profile.jpg";
+            }
+
+            List<Post> _posts = new List<Post>();
+            List<ApplicationUser> _usersPosted = new List<ApplicationUser>();
+            var posts = DbManager.PostLista.Where(p => p.UserProfileId == user.Id);
+            foreach(var post in posts)
+            {
+                var userPosted = UserManager.FindById(post.UserPostedId);
+                _posts.Add(post);
+                _usersPosted.Add(userPosted);
+            }
+            model.PostLista = _posts;
+            model.UsersPosted = _usersPosted;
+
+            return View(model);
+        }
+
+        public ActionResult AddFriend(string id)
+        {
+            var friendRequst = new FriendRequests();
+            friendRequst.UserReceivedId = id;
+            friendRequst.UserSentId = User.Identity.GetUserId();
+
+            DbManager.FriendRequests.Add(friendRequst);
+            DbManager.SaveChanges();
+
+            return RedirectToAction("Personal", "Account");
+        }
+        public ActionResult AddComment(ProfileViewModel model, string profileId)
+        {
+            if (ModelState.IsValid)
+            {
+                var comment = new Post();
+                comment.UserProfileId = profileId;
+                comment.UserPostedId = User.Identity.GetUserId();
+                comment.Comment = model.Comment;
+                DbManager.PostLista.Add(comment);
+                DbManager.SaveChanges();
+            }
+            return RedirectToAction("Personal", "Account", new { id = profileId });
         }
 
         //
@@ -120,7 +270,7 @@ namespace DejtingSite_.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -137,9 +287,12 @@ namespace DejtingSite_.Controllers
         //
         // GET: /Account/Register
         [AllowAnonymous]
-        public ActionResult Register()
+        public ActionResult Edit()
         {
-            return View();
+            EditViewModel model = new EditViewModel();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            model.user = user;
+            return View(model);
         }
 
         //
@@ -151,12 +304,22 @@ namespace DejtingSite_.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    BirthDate = model.BirthDate,
+                    Description = model.Description,
+                    City = model.City,
+                    Gender = model.Gender,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -172,6 +335,34 @@ namespace DejtingSite_.Controllers
             return View(model);
         }
 
+     
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(EditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var currUser = UserManager.FindById(User.Identity.GetUserId());
+                currUser.BirthDate = model.BirthDate;
+                currUser.Description = model.Description;
+                currUser.City = model.City;
+                currUser.Gender = model.Gender;
+                currUser.FirstName = model.FirstName;
+                currUser.LastName = model.LastName;
+                var result = await UserManager.UpdateAsync(currUser);
+                if (model.OldPassword != null && model.Password != null)
+                    await UserManager.ChangePasswordAsync(currUser.Id, model.OldPassword, model.Password);
+                model.user = currUser;
+                if (result.Succeeded)
+                {
+
+                }
+                AddErrors(result);
+            }
+
+            return View(model);
+        }
         //
         // GET: /Account/ConfirmEmail
         [AllowAnonymous]
