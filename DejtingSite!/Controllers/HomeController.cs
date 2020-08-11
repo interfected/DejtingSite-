@@ -1,20 +1,26 @@
 ﻿using DejtingSidan.Models;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNet.Identity;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.IO;
+using System.Reflection;
 
 namespace DejtingSidan.Controllers
 {
     public class HomeController : Controller
     {
+
+
         private ApplicationUserManager _userManager;
 
-        public OwnContext DbManager { get; set; } = new OwnContext();
+        public
+
+        OwnContext DbManager
+        { get; set; } = new OwnContext();
 
         public ApplicationUserManager UserManager
         {
@@ -28,6 +34,43 @@ namespace DejtingSidan.Controllers
             }
         }
 
+        /*public ActionResult Index(string searchText)
+        {
+            List<ApplicationUser> users = new List<ApplicationUser>();
+            List<bool> isFriends = new List<bool>();
+            List<string> filePaths = new List<string>();
+            if (Request.IsAuthenticated)
+            {
+                var currUser = UserManager.FindById(User.Identity.GetUserId());
+                //List<string> extensions = new List<string> { ".png", ".jpg", ".jpeg", ".gif" };
+                var searchedUsers = UserManager.Users.Where(u => u.Id != currUser.Id && (u.FirstName.Contains(searchText) || u.LastName.Contains(searchText)));
+                foreach (var user in searchedUsers)
+                {
+                    bool existAsFriend = DbManager.Friends.Any(f => (f.User1Id == user.Id && f.User2Id == currUser.Id)
+                        || (f.User2Id == user.Id && f.User1Id == currUser.Id));
+                    bool existAsRequest = DbManager.FriendRequests.Any(f => (f.UserSentId == user.Id && f.UserReceivedId == currUser.Id)
+                        || (f.UserReceivedId == user.Id && f.UserSentId == currUser.Id));
+                    isFriends.Add(existAsFriend || existAsRequest);
+                    users.Add(user);
+                    var file = Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadedFiles")).Where(f => f.Contains(user.Id));
+                    if (file.Count() != 0)
+                    {
+                        var filePath = file.First().Split('\\');
+                        var fileName = filePath[filePath.Length - 1];
+                        filePaths.Add(fileName);
+                    }
+                    else
+                    {
+                        filePaths.Add("default_profile.jpg");
+                    }
+                }
+            }
+            HomeViewModel model = new HomeViewModel();
+            model.users = users;
+            model.filePath = filePaths;
+            model.isFriends = isFriends;
+            return View(model);
+        }*/
         public ActionResult Index(string searchText)
         {
             List<ApplicationUser> users = new List<ApplicationUser>();
@@ -42,13 +85,13 @@ namespace DejtingSidan.Controllers
                     userList = UserManager.Users.Where(u => u.Id != currUser.Id && (u.FirstName.Contains(searchText) || u.LastName.Contains(searchText)));
                 else
                     userList = UserManager.Users.Where(u => u.Id != currUser.Id);
-                foreach(var user in userList)
+                foreach (var user in userList)
                 {
-                    bool finnsSomFriend = DbManager.Friends.Any(f => (f.User1Id == user.Id && f.User2Id == currUser.Id)
-                    || (f.User2Id == user.Id && f.User1Id == currUser.Id));
-                    bool finnsSomRequest = DbManager.FriendRequests.Any(f => (f.UserSentId == user.Id && f.UserReceivedId == currUser.Id)
-                    || (f.UserReceivedId == user.Id && f.UserSentId == currUser.Id));
-                    isFriends.Add(finnsSomFriend || finnsSomRequest);
+                    bool existAsFriend = DbManager.Friends.Any(f => (f.User1Id == user.Id && f.User2Id == currUser.Id)
+                        || (f.User2Id == user.Id && f.User1Id == currUser.Id));
+                    bool existAsRequest = DbManager.FriendRequests.Any(f => (f.UserSentId == user.Id && f.UserReceivedId == currUser.Id)
+                        || (f.UserReceivedId == user.Id && f.UserSentId == currUser.Id));
+                    isFriends.Add(existAsFriend || existAsRequest);
                     users.Add(user);
                     usersAdded++;
                     var file = Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadedFiles")).Where(f => f.Contains(user.Id));
@@ -64,7 +107,7 @@ namespace DejtingSidan.Controllers
                     }
                 }
             }
-            HomeViewModels model = new HomeViewModels();
+            HomeViewModel model = new HomeViewModel();
             model.users = users;
             model.filePath = filePaths;
             model.isFriends = isFriends;
@@ -73,11 +116,11 @@ namespace DejtingSidan.Controllers
 
         public ActionResult AddFriend(string id)
         {
-            var friendsRequest = new FriendRequests();
-            friendsRequest.UserReceivedId = id;
-            friendsRequest.UserSentId = User.Identity.GetUserId();
+            var friendRequest = new FriendRequests();
+            friendRequest.UserReceivedId = id;
+            friendRequest.UserSentId = User.Identity.GetUserId();
 
-            DbManager.FriendRequests.Add(friendsRequest);
+            DbManager.FriendRequests.Add(friendRequest);
             DbManager.SaveChanges();
 
             return RedirectToAction("Index", "Home");

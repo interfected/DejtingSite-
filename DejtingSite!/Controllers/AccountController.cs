@@ -8,9 +8,9 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using DejtingSidan.Models;
 using System.IO;
 using System.Collections.Generic;
-using DejtingSidan.Models;
 
 namespace DejtingSidan.Controllers
 {
@@ -21,6 +21,7 @@ namespace DejtingSidan.Controllers
         private ApplicationUserManager _userManager;
 
         public OwnContext DbManager { get; set; } = new OwnContext();
+
         public AccountController()
         {
         }
@@ -131,6 +132,8 @@ namespace DejtingSidan.Controllers
             return View();
         }
 
+        //
+        // GET: /Account/Personal
         public ActionResult Personal(string id)
         {
             var user = UserManager.FindById(id);
@@ -149,18 +152,17 @@ namespace DejtingSidan.Controllers
             model.Id = user.Id;
 
             bool existAsFriend = DbManager.Friends.Any(f => (f.User1Id == user.Id && f.User2Id == currUser.Id)
-                    || (f.User2Id == user.Id && f.User1Id == currUser.Id));
+                        || (f.User2Id == user.Id && f.User1Id == currUser.Id));
             bool existAsRequest = DbManager.FriendRequests.Any(f => (f.UserSentId == user.Id && f.UserReceivedId == currUser.Id)
-                    || (f.UserReceivedId == user.Id && f.UserSentId == currUser.Id));
+                || (f.UserReceivedId == user.Id && f.UserSentId == currUser.Id));
             bool isCurrUserProfile = (user.Id == currUser.Id);
 
             isFriends = (existAsFriend || existAsRequest || isCurrUserProfile);
 
             model.isFriend = isFriends;
 
-            var file = Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadedFiles"))
-                .Where(f => f.Contains(user.Id));
-            if(file.Count() != 0)
+            var file = Directory.GetFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UploadedFiles")).Where(f => f.Contains(user.Id));
+            if (file.Count() != 0)
             {
                 var filePath = file.First().Split('\\');
                 var fileName = filePath[filePath.Length - 1];
@@ -171,16 +173,17 @@ namespace DejtingSidan.Controllers
                 model.PicturePath = "default_profile.jpg";
             }
 
-            List<Post> _posts = new List<Post>();
+            //Add all Posts
+            List<Posts> _posts = new List<Posts>();
             List<ApplicationUser> _usersPosted = new List<ApplicationUser>();
-            var posts = DbManager.PostLista.Where(p => p.UserProfileId == user.Id);
-            foreach(var post in posts)
+            var posts = DbManager.Posts.Where(p => p.UserProfileId == user.Id);
+            foreach (var post in posts)
             {
                 var userPosted = UserManager.FindById(post.UserPostedId);
                 _posts.Add(post);
                 _usersPosted.Add(userPosted);
             }
-            model.PostLista = _posts;
+            model.Posts = _posts;
             model.UsersPosted = _usersPosted;
 
             return View(model);
@@ -188,24 +191,28 @@ namespace DejtingSidan.Controllers
 
         public ActionResult AddFriend(string id)
         {
-            var friendRequst = new FriendRequests();
-            friendRequst.UserReceivedId = id;
-            friendRequst.UserSentId = User.Identity.GetUserId();
+            var friendRequest = new FriendRequests();
+            friendRequest.UserReceivedId = id;
+            friendRequest.UserSentId = User.Identity.GetUserId();
 
-            DbManager.FriendRequests.Add(friendRequst);
+            DbManager.FriendRequests.Add(friendRequest);
             DbManager.SaveChanges();
 
             return RedirectToAction("Personal", "Account");
         }
+
+        //
+        // POST: /Account/Register
+        [HttpPost]
         public ActionResult AddComment(ProfileViewModel model, string profileId)
         {
             if (ModelState.IsValid)
             {
-                var comment = new Post();
+                var comment = new Posts();
                 comment.UserProfileId = profileId;
                 comment.UserPostedId = User.Identity.GetUserId();
                 comment.Comment = model.Comment;
-                DbManager.PostLista.Add(comment);
+                DbManager.Posts.Add(comment);
                 DbManager.SaveChanges();
             }
             return RedirectToAction("Personal", "Account", new { id = profileId });
@@ -287,12 +294,9 @@ namespace DejtingSidan.Controllers
         //
         // GET: /Account/Register
         [AllowAnonymous]
-        public ActionResult Edit()
+        public ActionResult Register()
         {
-            EditViewModel model = new EditViewModel();
-            var user = UserManager.FindById(User.Identity.GetUserId());
-            model.user = user;
-            return View(model);
+            return View();
         }
 
         //
@@ -335,7 +339,16 @@ namespace DejtingSidan.Controllers
             return View(model);
         }
 
-     
+        // GET: /Account/Register
+        [AllowAnonymous]
+        public ActionResult Edit()
+        {
+            EditViewModel model = new EditViewModel();
+            var user = UserManager.FindById(User.Identity.GetUserId());
+            model.user = user;
+            return View(model);
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -356,13 +369,14 @@ namespace DejtingSidan.Controllers
                 model.user = currUser;
                 if (result.Succeeded)
                 {
-
+                    //
                 }
                 AddErrors(result);
             }
-
+            // If we got this far, something failed, redisplay form
             return View(model);
         }
+
         //
         // GET: /Account/ConfirmEmail
         [AllowAnonymous]

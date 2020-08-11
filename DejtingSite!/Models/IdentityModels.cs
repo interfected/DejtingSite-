@@ -1,11 +1,14 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity.Infrastructure;
+using System.ComponentModel.DataAnnotations;
+using System.Data.Entity.ModelConfiguration.Conventions;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DejtingSidan.Models
 {
@@ -38,7 +41,7 @@ namespace DejtingSidan.Models
         //public ICollection<FriendRequests> UserReceivedFriendRequest { get; set; }
     }
 
-    public class Post
+    public class Posts
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
@@ -91,7 +94,7 @@ namespace DejtingSidan.Models
 
         public virtual DbSet<Friends> Friends { get; set; }
         public virtual DbSet<FriendRequests> FriendRequests { get; set; }
-        public virtual DbSet<Post> PostLista { get; set; }
+        public virtual DbSet<Posts> Posts { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -111,8 +114,8 @@ namespace DejtingSidan.Models
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Friends>();
             modelBuilder.Entity<FriendRequests>();
-            modelBuilder.Entity<Post>();
+            modelBuilder.Entity<Posts>();
         }
-        
+        //public System.Data.Entity.DbSet<DatingSite.Models.ApplicationUser> ApplicationUsers { get; set; }
     }
 }

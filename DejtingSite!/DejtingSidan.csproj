@@ -184,7 +184,6 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
-    <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\FileUploadController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -192,10 +191,11 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202007310929400_Initial.cs" />
-    <Compile Include="Migrations\202007310929400_Initial.Designer.cs">
-      <DependentUpon>202007310929400_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\202008101235091_Initial.cs" />
+    <Compile Include="Migrations\202008101235091_Initial.designer.cs">
+      <DependentUpon>202008101235091_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\Class1.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\FileUploadModels.cs" />
@@ -366,27 +366,33 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Views\Account\PersonligLayout.cshtml" />
+    <Content Include="Views\Account\Personal.cshtml" />
+    <Content Include="Views\Account\LäggTillVän.cshtml" />
+    <Content Include="Views\Account\Edit.cshtml" />
+    <Content Include="Views\Account\FriendList.cshtml" />
+    <Content Include="Views\FileUpload\Index.cshtml" />
+    <Content Include="Views\Home\AcceptFriend.cshtml" />
+    <Content Include="Views\Home\AddFriend.cshtml" />
+    <Content Include="Views\Home\DeclineFriend.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="UploadedFiles\" />
-    <Folder Include="Views\FileUpload\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.min.css.map" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202007310929400_Initial.resx">
-      <DependentUpon>202007310929400_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202008101235091_Initial.resx">
+      <DependentUpon>202008101235091_Initial.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

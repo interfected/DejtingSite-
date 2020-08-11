@@ -1,0 +1,63 @@
+﻿@model DejtingSidan.Models.FriendViewModel
+
+<div class="container">
+    @if (Model.friends.Count > 0)
+    {
+        <h1>Friend list</h1>
+
+        <div class="row">
+            @for (int i = 0; i < Model.friends.Count; i++)
+            {
+                <div class="col-md-4">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">@Model.friends.ElementAt(i).FirstName @Model.friends.ElementAt(i).LastName</h5>
+                            <p class="card-text">@Model.friends.ElementAt(i).Description</p>
+                            @Html.ActionLink("Profile", "Personal", "Account", new { Id = Model.friends.ElementAt(i).Id }, new { @class = "btn btn-primary" })
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <h1>Du har inga vänner, hitta lite nya XoXo</h1>
+    }
+
+    @if (Model.friendsReceived.Count > 0)
+    {
+        <h1>Vänförfrågningar</h1>
+        <div class="row">
+            @for (int i = 0; i < Model.friendsReceived.Count; i++)
+            {
+                <div class="col-md-4">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">@Model.friendsReceived.ElementAt(i).FirstName @Model.friendsReceived.ElementAt(i).LastName</h5>
+                            @Html.ActionLink("Accept", "AcceptFriend", "Home", new { id = Model.friendsReceived.ElementAt(i).Id }, new { @class = "btn btn-success" })
+                            @Html.ActionLink("Decline", "DeclineFriend", "Home", new { id = Model.friendsReceived.ElementAt(i).Id }, new { @class = "btn btn-danger" })
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    @if (Model.friendsSent.Count > 0)
+    {
+        <h1>Väntar på svar XoXo</h1>
+        <div class="row">
+            @for (int i = 0; i < Model.friendsSent.Count; i++)
+            {
+                <div class="col-md-4">
+                    <div class="card" style="width: 18rem">
+                        <div class="card-body">
+                            <h5 class="card-title">@Model.friendsSent.ElementAt(i).FirstName @Model.friendsSent.ElementAt(i).LastName</h5>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+    }
+</div>

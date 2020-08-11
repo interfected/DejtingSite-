@@ -1,0 +1,82 @@
+﻿@model DejtingSidan.Models.EditViewModel
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("Edit", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    <h4>Edit Account</h4>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(m => m.OldPassword, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.OldPassword, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+            
+        </div>
+        </div>
+
+        <a href="~/Views/Account/Edit.cshtml"></a>
+        <div class="form-group">
+            @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.FirstName, new { Value = Model.user.FirstName, @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.LastName, new { Value = Model.user.LastName, @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.BirthDate, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.BirthDate, new { Value = Model.user.BirthDate.ToString("yyyy/MM/dd"), @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.Gender, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(m => m.Gender, new List<SelectListItem> { new SelectListItem { Text = "Man" }, new SelectListItem { Text = "Kvinna" } }, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.City, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.City, new { Value = Model.user.City, @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-control">
+            @Html.LabelFor(m => m.Description, new { @class = "col-md-2 control-label" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(m => m.Description, new { Value = Model.user.Description, @class = "form-control" })
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offsent-2 col-md-10">
+                <input type="submit" , class="btn btn-primary" value="Spara Ändringar" />
+            </div>
+        </div>
+        }
+        @Html.ActionLink("Click here to change profile picture", "Index", "FileUpload", null, new { @class = "btn btn-secondary" })
+
+        @section Scripts{
+            @Scripts.Render("~/bundles/jqueryval")
+        }
+
